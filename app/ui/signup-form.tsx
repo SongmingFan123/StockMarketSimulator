@@ -37,10 +37,18 @@ export default function SignUpForm() {
           type="password"
         />
       </div>
-      {state.errors?.username && <ErrorMessageContainer errorMessage={state.errors.username[0]} />}
-      {state.errors?.email && <ErrorMessageContainer errorMessage={state.errors.email[0]} />}
-      {state.errors?.password && <ErrorMessageContainer errorMessage={state.errors.password[0]} />}
-      {state.errors?.confirmPassword && <ErrorMessageContainer errorMessage={state.errors.confirmPassword[0]} />}
+      {state.errors?.username && (
+        <ErrorMessageContainer errorMessage={state.errors.username[0]} />
+      )}
+      {state.errors?.email && (
+        <ErrorMessageContainer errorMessage={state.errors.email[0]} />
+      )}
+      {state.errors?.password && (
+        <ErrorMessageContainer errorMessage={state.errors.password[0]} />
+      )}
+      {state.errors?.confirmPassword && (
+        <ErrorMessageContainer errorMessage={state.errors.confirmPassword[0]} />
+      )}
       {state.message && <ErrorMessageContainer errorMessage={state.message} />}
       <Button label="Sign Up" type="submit" />
     </form>

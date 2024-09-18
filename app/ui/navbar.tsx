@@ -10,39 +10,45 @@ import {
   SignoutIcon,
   LeaderboardIcon,
 } from "./icons";
-export default function SideNav() {
+import React from "react";
+const links = [
+  {
+    href: "/dashboard/trade",
+    name: "Trade",
+    icon: <SearchIcon />,
+  },
+  {
+    href: "/dashboard/portfolio",
+    name: "Portfolio",
+    icon: <PortfoliosIcon />,
+  },
+  {
+    href: "/dashboard/transaction-history",
+    name: "Transaction History",
+    icon: <TransactionIcon />,
+  },
+  {
+    href: "/dashboard/leaderboard",
+    name: "Leaderboard",
+    icon: <LeaderboardIcon />,
+  },
+  {
+    href: "/dashboard/manage-account",
+    name: "Manage Account",
+    icon: <AccountIcon />,
+  },
+];
+interface NavbarProps {
+  setIsNavMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export default function Navbar({ setIsNavMenuOpen }: NavbarProps) {
   const router = useRouter();
-  const links = [
-    {
-      href: "/dashboard/trade",
-      name: "Trade",
-      icon: <SearchIcon />,
-    },
-    {
-      href: "/dashboard/portfolio",
-      name: "Portfolio",
-      icon: <PortfoliosIcon />,
-    },
-    {
-      href: "/dashboard/transaction-history",
-      name: "Transaction History",
-      icon: <TransactionIcon />,
-    },
-    {
-      href: "/dashboard/leaderboard",
-      name: "Leaderboard",
-      icon: <LeaderboardIcon />,
-    },
-    {
-      href: "/dashboard/manage-account",
-      name: "Manage Account",
-      icon: <AccountIcon />,
-    },
-  ];
   const pathname = usePathname();
   return (
-    <nav className="sm:h-full sm:mt-0 mt-12 bg-indigo-500 text-white flex flex-col gap-8 text-sm p-2">
-      <h1 className="sm:font-semibold sm:p-2 sm:text-lg sm:block hidden">Stock Market Simulator</h1>
+    <nav className="h-screen sm:h-full sm:mt-0 mt-12 bg-indigo-500 text-white flex flex-col gap-8 text-sm p-2">
+      <h1 className="sm:font-semibold sm:p-2 sm:text-lg sm:block hidden">
+        Stock Market Simulator
+      </h1>
       {links.map((item) => {
         return (
           <Link
@@ -54,6 +60,9 @@ export default function SideNav() {
               "bg-white text-indigo-500 py-2 px-3 rounded-full"
             }`}
             key={item.name}
+            onClick={() => {
+              setIsNavMenuOpen(false);
+            }}
           >
             {item.icon}
             <p>{item.name}</p>

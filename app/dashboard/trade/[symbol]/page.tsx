@@ -45,11 +45,11 @@ export default async function StockInfo({
   const latestStockPrice = latestStockPriceResponse.data?.latest_stock_price;
   
   return (
-    <main className="h-screen flex flex-col p-2 sm:grid sm:grid-rows-2 gap-2">
-      <div className="h-full sm:col-span-1 bg-white rounded-lg shadow-md">
+    <main className="h-screen flex flex-col p-2 md:grid md:grid-rows-2 gap-2">
+      <div className="h-full md:col-span-1 bg-white rounded-lg shadow-md">
         <StockChart symbol={symbol} />
       </div>
-      <div className="grid sm:grid-cols-2 gap-2 h-full">
+      <div className="grid md:grid-cols-2 gap-2 h-full">
         <div className="col-span-1">
           <StockTradingForm
             accountBalance={accountBalance}

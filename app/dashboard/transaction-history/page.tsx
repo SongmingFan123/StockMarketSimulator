@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getTransactionData } from "../../lib/actions";
-import ColumnHeaderBar from "@/app/ui/column-header-bar";
 import { TransactionTable } from "@/app/ui/tables";
 interface Transaction {
   amount: number;

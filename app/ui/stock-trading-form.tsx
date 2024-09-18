@@ -19,7 +19,7 @@ export default function StockTradingForm({
   latestStockPrice,
   accountBalance,
   position,
-  symbol
+  symbol,
 }: StockTradingFormProps) {
   const [buyState, buyAction] = useFormState(
     buyStock.bind(null, symbol),
@@ -39,7 +39,9 @@ export default function StockTradingForm({
     { label: "Latest Price Per Share", data: latestStockPrice },
     {
       label: "Estimated Total Cost",
-      data: isNaN(quantity * latestStockPrice) ? 0 : quantity * latestStockPrice,
+      data: isNaN(quantity * latestStockPrice)
+        ? 0
+        : quantity * latestStockPrice,
     },
     { label: "Balance", data: accountBalance },
   ];
@@ -75,7 +77,7 @@ export default function StockTradingForm({
               if (isNaN(quantity)) {
                 setQuantity(0);
               }
-              setQuantity(prev => prev + 1);
+              setQuantity((prev) => prev + 1);
             }}
           >
             <PlusIcon />
@@ -99,7 +101,9 @@ export default function StockTradingForm({
             Buy
           </button>
         </div>
-        {isNaN(quantity) && <ErrorMessageContainer errorMessage={"Quantity can't be null"} />}
+        {isNaN(quantity) && (
+          <ErrorMessageContainer errorMessage={"Quantity can't be null"} />
+        )}
         {buyState.success ? (
           <p className="bg-white text-blue-500 p-2 rounded">
             {buyState.message}
@@ -124,10 +128,10 @@ export default function StockTradingForm({
               className="w-full flex items-center justify-between"
               key={index}
             >
-              <h3>{item.label}</h3>
-              <span className="text-indigo-500 py-1 px-2 bg-white rounded-full">
+              <p>{item.label}</p>
+              <p className="text-indigo-500 py-1 px-2 bg-white rounded-full">
                 {item.data}
-              </span>
+              </p>
             </div>
           );
         })}

@@ -2,6 +2,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const SignInFormSchema = z.object({
   email: z
     .string()
@@ -9,13 +10,14 @@ const SignInFormSchema = z.object({
     .email({ message: "Invalid email address" }),
   password: z
     .string()
-    .min(8, { message: "Password is required and should be at least 8 characters long" }),
+    .min(8, {
+      message: "Password is required and should be at least 8 characters long",
+    }),
 });
 
 const SignUpFormSchema = z
   .object({
-    username: z.string()
-    .min(1, { message: "Username is required" }),
+    username: z.string().min(1, { message: "Username is required" }),
     email: z
       .string()
       .min(1, { message: "Email is required" })
@@ -30,8 +32,7 @@ const SignUpFormSchema = z
     message: "Passwords don't match",
   });
 const UpdateUsernameFormSchema = z.object({
-  username: z.string()
-  .min(1, { message: "Username can't be blank" }),
+  username: z.string().min(1, { message: "Username can't be blank" }),
 });
 const UpdatePasswordFormSchema = z.object({
   password: z
@@ -49,7 +50,7 @@ export const signIn = async (previousState: any, formData: FormData) => {
     };
   }
   try {
-    const response = await fetch("http://localhost:5000/api/signin", {
+    const response = await fetch(`${apiUrl}/api/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +85,7 @@ export const signUp = async (previousState: any, formData: FormData) => {
     };
   }
   try {
-    const response = await fetch("http://localhost:5000/api/signup", {
+    const response = await fetch(`${apiUrl}/api/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +109,7 @@ export const signUp = async (previousState: any, formData: FormData) => {
 };
 export const signout = async () => {
   try {
-    const response = await fetch("http://localhost:5000/api/signout", {
+    const response = await fetch(`${apiUrl}/api/signout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -142,7 +143,7 @@ export const updatePassword = async (
     };
   }
   try {
-    const response = await fetch("http://localhost:5000/api/update-password", {
+    const response = await fetch(`${apiUrl}/api/update-password`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -154,7 +155,7 @@ export const updatePassword = async (
     });
     const { message } = await response.json();
     if (!response.ok) {
-      return {errors: null, success: false, message };
+      return { errors: null, success: false, message };
     }
     return { success: true, message };
   } catch (error) {
@@ -179,7 +180,7 @@ export const updateUsername = async (
     };
   }
   try {
-    const response = await fetch("http://localhost:5000/api/update-username", {
+    const response = await fetch(`${apiUrl}/api/update-username`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -205,7 +206,7 @@ export const updateUsername = async (
 export const searchStock = async (query: string) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/search-stock/${query}`,
+      `${apiUrl}/api/search-stock/${query}`,
       {
         method: "GET",
         headers: {
@@ -233,7 +234,7 @@ export const sellStock = async (
   formData: FormData
 ) => {
   try {
-    const response = await fetch("http://localhost:5000/api/sell-stock", {
+    const response = await fetch(`${apiUrl}/api/sell-stock`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -262,7 +263,7 @@ export const buyStock = async (
   formData: FormData
 ) => {
   try {
-    const response = await fetch("http://localhost:5000/api/buy-stock", {
+    const response = await fetch(`${apiUrl}/api/buy-stock`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -288,7 +289,7 @@ export const buyStock = async (
 export const getStockInfoData = async (symbol: string) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/stock_info_data/${symbol}`,
+      `${apiUrl}/api/stock_info_data/${symbol}`,
       {
         method: "GET",
         headers: {
@@ -314,7 +315,7 @@ export const getStockInfoData = async (symbol: string) => {
 export const getStockPriceData = async (symbol: string, period: string) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/stock_price_data/${symbol}/${period}`,
+      `${apiUrl}/api/stock_price_data/${symbol}/${period}`,
       {
         method: "GET",
         headers: {
@@ -342,7 +343,7 @@ export const getStockPriceData = async (symbol: string, period: string) => {
 };
 export const getAccountBalance = async () => {
   try {
-    const response = await fetch("http://localhost:5000/api/account-balance", {
+    const response = await fetch(`${apiUrl}/api/account-balance`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -364,7 +365,7 @@ export const getAccountBalance = async () => {
 export const getStockPosition = async (symbol: string) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/stock-position/${symbol}`,
+      `${apiUrl}/api/stock-position/${symbol}`,
       {
         method: "GET",
         headers: {
@@ -388,7 +389,7 @@ export const getStockPosition = async (symbol: string) => {
 export const getLatestStockPrice = async (symbol: string) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/latest-stock-price/${symbol}`,
+      `${apiUrl}/api/latest-stock-price/${symbol}`,
       {
         method: "GET",
         headers: {
@@ -411,7 +412,7 @@ export const getLatestStockPrice = async (symbol: string) => {
 };
 export const getLeaderboardData = async () => {
   try {
-    const response = await fetch(`http://localhost:5000/api/leaderboard`, {
+    const response = await fetch(`${apiUrl}/api/leaderboard`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${cookies().get("token")?.value}`,
@@ -433,7 +434,7 @@ export const getLeaderboardData = async () => {
 };
 export const getSearchStockData = async () => {
   try {
-    const response = await fetch(`http://localhost:5000/api/search-stock`, {
+    const response = await fetch(`${apiUrl}/api/search-stock`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${cookies().get("token")?.value}`,
@@ -456,7 +457,7 @@ export const getSearchStockData = async () => {
 export const getTransactionData = async () => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/stock-transactions`,
+      `${apiUrl}/api/stock-transactions`,
       {
         method: "GET",
         headers: {
@@ -479,7 +480,7 @@ export const getTransactionData = async () => {
 };
 export const getPortfolioData = async () => {
   try {
-    const response = await fetch(`http://localhost:5000/api/portfolio`, {
+    const response = await fetch(`${apiUrl}/api/portfolio`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${cookies().get("token")?.value}`,

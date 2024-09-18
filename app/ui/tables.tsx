@@ -6,34 +6,41 @@ interface Ranking {
   gainLossPercentage: string;
 }
 interface LeaderboardTableProps {
-  leaderboardRankings: Ranking[];
+  rankings: Ranking[];
 }
-export function LeaderboardTable({
-  leaderboardRankings,
-}: LeaderboardTableProps) {
+export function LeaderboardTable({ rankings }: LeaderboardTableProps) {
   const headers = ["Username", "Total Profit", "Gain/Loss Percentage"];
   return (
     <table className="w-full text-left">
       <thead className="sticky sm:top-0 top-12">
         <tr className="flex justify-around p-2 max-w-full bg-indigo-500 text-white rounded-lg m-2">
           {headers.map((item) => {
-            return <th className="ml-2 overflow-x-auto flex-1" key={item}>{item}</th>;
+            return (
+              <th className="pl-2 overflow-x-auto flex-1" key={item}>
+                {item}
+              </th>
+            );
           })}
         </tr>
       </thead>
       <tbody>
-        {leaderboardRankings && leaderboardRankings.map((item) => {
-          return (
-            <tr
-              className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
-              key={item.username}
-            >
-              <td className="flex-1 ml-2 overflow-x-auto">{item.username}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.totalProfit}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.gainLossPercentage}%</td>
-            </tr>
-          );
-        })}
+        {rankings &&
+          rankings.map((item) => {
+            return (
+              <tr
+                className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
+                key={item.username}
+              >
+                <td className="flex-1 pl-2 overflow-x-auto">{item.username}</td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.totalProfit}
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.gainLossPercentage}%
+                </td>
+              </tr>
+            );
+          })}
       </tbody>
     </table>
   );
@@ -63,41 +70,53 @@ export function PortfolioTable({ portfolio }: PortfolioTableProps) {
       <thead className="sticky sm:top-0 top-12">
         <tr className="flex justify-around p-2 max-w-full bg-indigo-500 text-white rounded-lg m-2">
           {headers.map((item) => {
-            return <th className="ml-2 overflow-x-auto flex-1" key={item}>{item}</th>;
+            return (
+              <th className="pl-2 overflow-x-auto flex-1" key={item}>
+                {item}
+              </th>
+            );
           })}
         </tr>
       </thead>
       <tbody>
-        {portfolio && portfolio.map((item) => {
-          return (
-            <tr
-              className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
-              key={item.symbol}
-            >
-              <td className="items-start flex-1 ml-2 overflow-x-auto">
-                <Link
-                  className="text-indigo-500 underline hover:text-indigo-400"
-                  href={`/dashboard/trade/${item.symbol.toUpperCase()}`}
-                >
-                  {item.symbol}
-                </Link>
-              </td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.shares}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.average_cost && item.average_cost.toFixed(2)}</td>
-              <td
-                className={`flex-1 ml-2 overflow-x-auto ${
-                  item.percentage_gain_loss >= 0
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
+        {portfolio &&
+          portfolio.map((item) => {
+            return (
+              <tr
+                className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
+                key={item.symbol}
               >
-                {item.percentage_gain_loss}%
-              </td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.total_cost && item.total_cost.toFixed(2)}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.total_market_value && item.total_market_value.toFixed(2)}</td>
-            </tr>
-          );
-        })}
+                <td className="items-start flex-1 pl-2 overflow-x-auto">
+                  <Link
+                    className="text-indigo-500 underline hover:text-indigo-400"
+                    href={`/dashboard/trade/${item.symbol.toUpperCase()}`}
+                  >
+                    {item.symbol}
+                  </Link>
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">{item.shares}</td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.average_cost && item.average_cost.toFixed(2)}
+                </td>
+                <td
+                  className={`flex-1 pl-2 overflow-x-auto ${
+                    item.percentage_gain_loss >= 0
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {item.percentage_gain_loss}%
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.total_cost && item.total_cost.toFixed(2)}
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.total_market_value &&
+                    item.total_market_value.toFixed(2)}
+                </td>
+              </tr>
+            );
+          })}
       </tbody>
     </table>
   );
@@ -128,33 +147,44 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
       <thead className="sticky sm:top-0 top-12 ">
         <tr className="flex justify-around p-2 max-w-full bg-indigo-500 text-white rounded-lg m-2">
           {headers.map((item) => {
-            return <th className="ml-2 overflow-x-auto flex-1" key={item}>{item}</th>;
+            return (
+              <th className="pl-2 overflow-x-auto flex-1" key={item}>
+                {item}
+              </th>
+            );
           })}
         </tr>
       </thead>
       <tbody>
-        {transactions && transactions.map((item: Transaction) => {
-          return (
-            <tr
-              className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
-              key={item.symbol}
-            >
-              <td className="items-start flex-1 ml-2 overflow-x-auto">
-                <Link
-                  className="text-indigo-500 underline hover:text-indigo-400"
-                  href={`/dashboard/trade/${item.symbol.toUpperCase()}`}
-                >
-                  {item.symbol}
-                </Link>
-              </td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.shares}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.price && item.price.toFixed(2)}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.time}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.amount && item.amount.toFixed(2)}</td>
-              <td className="flex-1 ml-2 overflow-x-auto">{item.type.toUpperCase()}</td>
-            </tr>
-          );
-        })}
+        {transactions &&
+          transactions.map((item: Transaction) => {
+            return (
+              <tr
+                className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
+                key={item.symbol}
+              >
+                <td className="items-start flex-1 pl-2 overflow-x-auto">
+                  <Link
+                    className="text-indigo-500 underline hover:text-indigo-400"
+                    href={`/dashboard/trade/${item.symbol.toUpperCase()}`}
+                  >
+                    {item.symbol}
+                  </Link>
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">{item.shares}</td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.price && item.price.toFixed(2)}
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">{item.time}</td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.amount && item.amount.toFixed(2)}
+                </td>
+                <td className="flex-1 pl-2 overflow-x-auto">
+                  {item.type.toUpperCase()}
+                </td>
+              </tr>
+            );
+          })}
       </tbody>
     </table>
   );

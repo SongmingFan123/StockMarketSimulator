@@ -11,14 +11,11 @@ interface StockInfo {
   volume: number;
 }
 interface StockInfoDetailsProps {
-  stockInfo: StockInfo
+  stockInfo: StockInfo;
   symbol: string;
 }
 
-export function StockInfoDetails({
-  stockInfo,
-  symbol,
-}: StockInfoDetailsProps) {
+export function StockInfoDetails({ stockInfo, symbol }: StockInfoDetailsProps) {
   const stockInfoData = [
     {
       label: "Day High",
@@ -63,7 +60,7 @@ export function StockInfoDetails({
   ];
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg ">
-      <h1 className="text-2xl text-indigo-500 font-bold">{symbol}</h1>
+      <h2 className="text-2xl text-indigo-500 font-bold">{symbol}</h2>
       <div className="flex flex-col gap-2 mt-2">
         {stockInfoData.map((item, index) => {
           return (

@@ -2,20 +2,18 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, make_response, jsonify
 from flask_bcrypt import Bcrypt
-from flask_dance.contrib.google import make_google_blueprint, google
 from pymongo import MongoClient
 from bson import ObjectId
 import datetime
 import yfinance
 from flask_cors import CORS
-from pandas import DataFrame
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required, get_jwt
 from flask_jwt_extended import JWTManager
 import csv
 import redis
-ACCESS_EXPIRES = datetime.timedelta(hours=1)
+ACCESS_EXPIRES = datetime.timedelta(hours=4)
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 bcrypt = Bcrypt(app)
@@ -23,10 +21,15 @@ load_dotenv()
 
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 jwt = JWTManager(app)
-client = MongoClient('localhost', 27017)
 
+mongo_host = os.environ.get('MONGO_HOST', 'localhost')
+mongo_port = int(os.environ.get('MONGO_PORT', 27017))
+client = MongoClient(mongo_host, mongo_port)
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+redis_port = int(os.environ.get('REDIS_PORT', 6379))
 jwt_redis_blocklist = redis.StrictRedis(
-    host="localhost", port=6379, db=0, decode_responses=True
+    host=redis_host, port=redis_port, db=0, decode_responses=True
 )
 
 db = client.stock_trading_simulator_database
@@ -336,7 +339,18 @@ def get_stock_price_data(symbol, period):
     stock_price_data.drop(columns=['Date'], inplace=True)
     return list(stock_price_data.to_dict(orient='records'))
 
-# To load stock info data from csv to mongodb database, uncomment the code underneath and replace with the absolute filepath to nasdaq_stock_info.csv
+def csv_to_json(csv_file_path):
+    json_data = []
+    with open(csv_file_path, mode='r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            json_data.append({key: row[key] for key in ['Symbol', 'Name']})
+    return json_data
+
+# To load stock info data from csv to mongodb, uncomment the following line of code and replace file path with the absolute file path to nasdaq_stock_info.csv
+# comment out the line of code after insertion
+
+# stocks.insert_many(csv_to_json('filepath'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -16,7 +16,10 @@ export default function SignInForm() {
       className="min-w-[100px] m-2 sm:w-[600px] sm:mx-0 flex flex-col gap-5 bg-white p-12 rounded-lg border border-indigo-500"
     >
       <h1 className="text-2xl">
-        Sign in to <span className="font-semibold text-indigo-700">Stock Market Simulator</span>
+        Sign in to{" "}
+        <span className="font-semibold text-indigo-700">
+          Stock Market Simulator
+        </span>
       </h1>
       <div>
         <label htmlFor="email">Email</label>

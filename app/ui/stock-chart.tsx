@@ -64,7 +64,7 @@ export default function StockChart({ symbol }: StockChartProps) {
     })();
   }, []);
   return (
-    <div className="flex flex-col sm:flex-row h-full">
+    <div className="flex flex-col md:flex-row h-full">
       <div className="w-full">
         <div className="flex items-start gap-2 m-2">
           <PeriodButton

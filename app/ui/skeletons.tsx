@@ -11,12 +11,9 @@ export function TableSkeleton() {
     </div>
   );
 }
-export function TradeCardSkeleton() {
+export function HorizontalTradeCardSkeleton() {
   return (
-    <div
-      role="status"
-      className="h-full w-full animate-pulse p-2 grid gap-2"
-    >
+    <div role="status" className="h-full w-full animate-pulse p-2 grid gap-2">
       <div className="h-full bg-gray-300 rounded-lg shadow-md"></div>
       <div className="grid grid-cols-2 gap-2">
         <div className="h-full bg-gray-300 rounded-lg"></div>
@@ -25,4 +22,13 @@ export function TradeCardSkeleton() {
     </div>
   );
 }
-
+export function VerticalTradeCardSkeleton() {
+  return (
+    <div role="status" className="h-full w-full animate-pulse p-2 grid gap-2">
+      <div className="h-full bg-gray-300 rounded-lg shadow-md"></div>
+      <div className="h-full bg-gray-300 rounded-lg shadow-md"></div>
+      <div className="h-full bg-gray-300 rounded-lg shadow-md"></div>
+      <div className="h-full bg-gray-300 rounded-lg shadow-md"></div>
+    </div>
+  );
+}

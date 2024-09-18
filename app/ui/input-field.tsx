@@ -20,7 +20,7 @@ export default function InputField({
   return (
     <input
     {...rest}
-      className="w-full p-2 text-black outline-none focus:border-none focus:ring-2 focus:ring-indigo-700 border-indigo-500 border rounded-lg"
+      className="w-full p-2 text-black outline-none border-indigo-500 border rounded-lg"
       type={type}
       id={id}
       name={name}

@@ -1,3 +1,3 @@
 export default function NotFound() {
-    return <div>Stock Not found</div>
+    return <p className="h-screen flex justify-center items-center text-gray-900 text-xl font-semibold">Stock Not found</p>
 }

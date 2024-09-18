@@ -13,13 +13,14 @@ interface StockTradingFormProps {
   latestStockPrice: number;
   accountBalance: number;
   position: number;
+  symbol: string;
 }
 export default function StockTradingForm({
   latestStockPrice,
   accountBalance,
   position,
+  symbol
 }: StockTradingFormProps) {
-  const symbol = "aapl";
   const [buyState, buyAction] = useFormState(
     buyStock.bind(null, symbol),
     initialState
@@ -38,14 +39,12 @@ export default function StockTradingForm({
     { label: "Latest Price Per Share", data: latestStockPrice },
     {
       label: "Estimated Total Cost",
-      data: isNaN(quantity * latestStockPrice)
-        ? 0
-        : quantity * latestStockPrice,
+      data: isNaN(quantity * latestStockPrice) ? 0 : quantity * latestStockPrice,
     },
     { label: "Balance", data: accountBalance },
   ];
   return (
-    <div className="h-full bg-indigo-500 w-full rounded-lg shadow-md text-white overflow-auto">
+    <div className="h-full bg-indigo-500 rounded-lg shadow-md text-white overflow-auto">
       <form className="flex flex-col items-start p-2 gap-3">
         <div className="flex items-center gap-2">
           <label>Shares</label>
@@ -76,7 +75,7 @@ export default function StockTradingForm({
               if (isNaN(quantity)) {
                 setQuantity(0);
               }
-              setQuantity((prev) => prev + 1);
+              setQuantity(prev => prev + 1);
             }}
           >
             <PlusIcon />

@@ -2,6 +2,7 @@ import {
   getAccountBalance,
   getLatestStockPrice,
   getStockInfoData,
+  getStockPosition,
   getStockPriceData,
 } from "@/app/lib/actions";
 import StockChart from "@/app/ui/stock-chart";
@@ -36,27 +37,29 @@ export default async function StockInfo({
   }
   const stockInfoResponse = await getStockInfoData(symbol);
   const stockInfo = stockInfoResponse.data.stock_info_data;
-  const position = stockInfoResponse.data.shares;
+  const stockPositionResponse = await getStockPosition(symbol);
+  const position = stockPositionResponse.data.shares;
   const accountBalanceResponse = await getAccountBalance();
   const accountBalance = accountBalanceResponse.data?.balance;
   const latestStockPriceResponse = await getLatestStockPrice(symbol);
   const latestStockPrice = latestStockPriceResponse.data?.latest_stock_price;
-
+  
   return (
-    <main className="h-screen p-2 grid grid-rows-2 gap-2">
-      <div className="h-full col-span-1 bg-white rounded-lg shadow-md">
+    <main className="h-screen flex flex-col p-2 sm:grid sm:grid-rows-2 gap-2">
+      <div className="h-full sm:col-span-1 bg-white rounded-lg shadow-md">
         <StockChart symbol={symbol} />
       </div>
-      <div className="h-full col-span-1 grid grid-cols-2 gap-2">
-        <div className="h-full col-span-1">
+      <div className="grid sm:grid-cols-2 gap-2 h-full">
+        <div className="col-span-1">
           <StockTradingForm
             accountBalance={accountBalance}
             latestStockPrice={latestStockPrice}
             position={isNaN(position) ? 0 : position}
+            symbol={symbol}
           />
         </div>
-        <div className="h-full col-span-1 overflow-y-scroll">
-          <StockInfoDetails stockInfo={stockInfo} symbol={symbol} />
+        <div className="col-span-1 overflow-y-scroll">
+          <StockInfoDetails stockInfo={stockInfo} symbol={symbol}/>
         </div>
       </div>
     </main>

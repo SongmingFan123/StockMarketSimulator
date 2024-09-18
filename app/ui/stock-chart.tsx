@@ -25,9 +25,11 @@ interface StockChartProps {
 export default function StockChart({ symbol }: StockChartProps) {
   const [currentData, setCurrentData] = useState<StockPriceData | null>(null);
   const StockPriceDataTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      setCurrentData(payload[0].payload as StockPriceData);
-    }
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        setCurrentData(payload[0].payload as StockPriceData);
+      }
+    }, [active, payload]);
     return null;
   };
   const currentStockData = [
@@ -62,8 +64,8 @@ export default function StockChart({ symbol }: StockChartProps) {
     })();
   }, []);
   return (
-    <div className="flex h-full">
-      <div className="w-1/2">
+    <div className="flex flex-col sm:flex-row h-full">
+      <div className="w-full">
         <div className="flex items-start gap-2 m-2">
           <PeriodButton
             label="1D"
@@ -124,7 +126,7 @@ export default function StockChart({ symbol }: StockChartProps) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="w-1/2 h-full bg-indigo-500 text-white p-2 rounded-lg">
+      <div className="w-full bg-indigo-500 text-white p-2 rounded-lg">
         {currentData ? (
           <div className="flex flex-col p-2">
             {currentStockData.map((item, index) => (
@@ -136,7 +138,7 @@ export default function StockChart({ symbol }: StockChartProps) {
           </div>
         ) : (
           <p className="font-semibold text-center flex justify-center">
-            Hover Over Chart to View Stock Data
+            Hover over chart to see open, high, low, close values and date
           </p>
         )}
       </div>

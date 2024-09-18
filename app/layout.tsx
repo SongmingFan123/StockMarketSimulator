@@ -7,10 +7,7 @@ import { cookies } from "next/headers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: {
-    template: '%s | Stock Market Simulator',
-    default: 'Stock Market Simulator',
-  },
+  title: 'Stock Market Simulator',
   description: "Practice Stock Trading Skills",
 };
 

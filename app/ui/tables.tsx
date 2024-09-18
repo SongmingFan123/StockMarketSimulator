@@ -14,23 +14,23 @@ export function LeaderboardTable({
   const headers = ["Username", "Total Profit", "Gain/Loss Percentage"];
   return (
     <table className="w-full text-left">
-      <thead className="sticky top-0 ">
+      <thead className="sticky sm:top-0 top-12">
         <tr className="flex justify-around p-2 max-w-full bg-indigo-500 text-white rounded-lg m-2">
           {headers.map((item) => {
-            return <th className="ml-9 flex-1">{item}</th>;
+            return <th className="ml-2 overflow-x-auto flex-1" key={item}>{item}</th>;
           })}
         </tr>
       </thead>
       <tbody>
-        {leaderboardRankings.map((item) => {
+        {leaderboardRankings && leaderboardRankings.map((item) => {
           return (
             <tr
               className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
               key={item.username}
             >
-              <td className="flex-1 ml-9">{item.username}</td>
-              <td className="flex-1 ml-9">{item.totalProfit}</td>
-              <td className="flex-1 ml-9">{item.gainLossPercentage}%</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.username}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.totalProfit}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.gainLossPercentage}%</td>
             </tr>
           );
         })}
@@ -60,21 +60,21 @@ export function PortfolioTable({ portfolio }: PortfolioTableProps) {
   ];
   return (
     <table className="w-full text-left">
-      <thead className="sticky top-0 ">
+      <thead className="sticky sm:top-0 top-12">
         <tr className="flex justify-around p-2 max-w-full bg-indigo-500 text-white rounded-lg m-2">
           {headers.map((item) => {
-            return <th className="ml-9 flex-1">{item}</th>;
+            return <th className="ml-2 overflow-x-auto flex-1" key={item}>{item}</th>;
           })}
         </tr>
       </thead>
       <tbody>
-        {portfolio.map((item) => {
+        {portfolio && portfolio.map((item) => {
           return (
             <tr
               className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
               key={item.symbol}
             >
-              <td className="items-start flex-1 ml-9">
+              <td className="items-start flex-1 ml-2 overflow-x-auto">
                 <Link
                   className="text-indigo-500 underline hover:text-indigo-400"
                   href={`/dashboard/trade/${item.symbol.toUpperCase()}`}
@@ -82,10 +82,10 @@ export function PortfolioTable({ portfolio }: PortfolioTableProps) {
                   {item.symbol}
                 </Link>
               </td>
-              <td className="flex-1 ml-9">{item.shares}</td>
-              <td className="flex-1 ml-9">{item.average_cost}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.shares}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.average_cost && item.average_cost.toFixed(2)}</td>
               <td
-                className={`flex-1 ml-9 ${
+                className={`flex-1 ml-2 overflow-x-auto ${
                   item.percentage_gain_loss >= 0
                     ? "text-green-500"
                     : "text-red-500"
@@ -93,8 +93,8 @@ export function PortfolioTable({ portfolio }: PortfolioTableProps) {
               >
                 {item.percentage_gain_loss}%
               </td>
-              <td className="flex-1 ml-9">{item.total_cost}</td>
-              <td className="flex-1 ml-9">{item.total_market_value}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.total_cost && item.total_cost.toFixed(2)}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.total_market_value && item.total_market_value.toFixed(2)}</td>
             </tr>
           );
         })}
@@ -125,21 +125,21 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
   ];
   return (
     <table className="w-full text-left">
-      <thead className="sticky top-0 ">
+      <thead className="sticky sm:top-0 top-12 ">
         <tr className="flex justify-around p-2 max-w-full bg-indigo-500 text-white rounded-lg m-2">
           {headers.map((item) => {
-            return <th className="ml-9 flex-1">{item}</th>;
+            return <th className="ml-2 overflow-x-auto flex-1" key={item}>{item}</th>;
           })}
         </tr>
       </thead>
       <tbody>
-        {transactions.map((item: Transaction) => {
+        {transactions && transactions.map((item: Transaction) => {
           return (
             <tr
               className="max-w-full p-2 bg-white m-2 rounded-full border flex justify-around"
               key={item.symbol}
             >
-              <td className="items-start flex-1 ml-9">
+              <td className="items-start flex-1 ml-2 overflow-x-auto">
                 <Link
                   className="text-indigo-500 underline hover:text-indigo-400"
                   href={`/dashboard/trade/${item.symbol.toUpperCase()}`}
@@ -147,11 +147,11 @@ export function TransactionTable({ transactions }: TransactionTableProps) {
                   {item.symbol}
                 </Link>
               </td>
-              <td className="flex-1 ml-9">{item.shares}</td>
-              <td className="flex-1 ml-9">{item.price}</td>
-              <td className="flex-1 ml-9">{item.time}</td>
-              <td className="flex-1 ml-9">{item.amount}</td>
-              <td className="flex-1 ml-9">{item.type.toUpperCase()}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.shares}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.price && item.price.toFixed(2)}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.time}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.amount && item.amount.toFixed(2)}</td>
+              <td className="flex-1 ml-2 overflow-x-auto">{item.type.toUpperCase()}</td>
             </tr>
           );
         })}

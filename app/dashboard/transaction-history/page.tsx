@@ -11,12 +11,11 @@ interface Transaction {
   type: "buy" | "sell";
 }
 export default async function Transaction() {
-  const fields = ["Symbol", "Shares", "Price", "Time", "Amount", "Type"];
   const transactionDataResponse = await getTransactionData();
   const transactions = transactionDataResponse.data?.transactions;
   return (
     <main>
-      {transactions.length === 0 ? (
+      {transactions && transactions.length === 0 ? (
         <p className="h-screen flex justify-center items-center text-indigo-500 text-xl font-semibold">
           No Transactions
         </p>

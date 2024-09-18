@@ -1,5 +1,5 @@
-import Skeleton from "@/app/ui/skeletons";
+import { TradeCardSkeleton } from "@/app/ui/skeletons";
 
 export default function Loading() {
-    return <Skeleton/>
+  return <TradeCardSkeleton />;
 }

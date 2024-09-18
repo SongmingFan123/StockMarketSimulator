@@ -20,7 +20,7 @@ export default function SideNav() {
     },
     {
       href: "/dashboard/portfolio",
-      name: "Portfolios",
+      name: "Portfolio",
       icon: <PortfoliosIcon />,
     },
     {
@@ -41,8 +41,8 @@ export default function SideNav() {
   ];
   const pathname = usePathname();
   return (
-    <nav className="h-full bg-indigo-500 text-white flex flex-col gap-8 text-sm p-2">
-      <h1 className="font-semibold p-2 text-lg">Stock Market Simulator</h1>
+    <nav className="sm:h-full sm:mt-0 mt-12 bg-indigo-500 text-white flex flex-col gap-8 text-sm p-2">
+      <h1 className="sm:font-semibold sm:p-2 sm:text-lg sm:block hidden">Stock Market Simulator</h1>
       {links.map((item) => {
         return (
           <Link
@@ -70,7 +70,7 @@ export default function SideNav() {
           }
         }}
       >
-        <button className="w-full mt-72 flex items-center bg-red-500 text-white p-2 rounded-lg hover:text-red-500 hover:bg-white">
+        <button className="w-full sm:mt-72 flex items-center bg-red-500 text-white p-2 rounded-lg hover:text-red-500 hover:bg-white">
           <SignoutIcon />
           <p>Sign Out</p>
         </button>

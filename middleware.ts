@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const cookie = cookies().get("token");
-  if (!cookies) {
+  const token = cookies().get("token");
+  if (!token) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${cookie?.value}`,
+      Authorization: `Bearer ${token?.value}`,
     },
   });
   if (!response.ok) {
@@ -21,5 +21,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/dashboard/:path*",
+  matcher: ["/dashboard/:path*", "/"]
 };

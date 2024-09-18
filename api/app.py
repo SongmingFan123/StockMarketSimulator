@@ -29,6 +29,15 @@ jwt_redis_blocklist = redis.StrictRedis(
     host="localhost", port=6379, db=0, decode_responses=True
 )
 
+db = client.stock_trading_simulator_database
+stocks = db.stocks
+user_stock_portfolios = db.user_stock_portfolios
+users = db.users
+transactions = db.transactions
+portfolios = db.portfolios
+accounts = db.accounts
+stocks = db.stocks
+
 @jwt.token_in_blocklist_loader
 def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
     jti = jwt_payload["jti"]
@@ -50,7 +59,11 @@ def signup():
         if not username or not email:
             return make_response(jsonify({"message": "Username, email, or password is missing"})), 400
         if users.find_one({'email': email}) is not None:
-            return make_response(jsonify({"message": "User with the email already exists"})), 409
+            return make_response(jsonify({"message": "An account with the email already exists"})), 409
+        if users.find_one({'username': username}):
+            return make_response(jsonify({'message': 'An account with the username already exists'}), 409)
+        if len(password) < 8:
+            return make_response(jsonify({'message': 'Password must be at least 8 characters long'}), 400)
         users.insert_one({'username': username, 'email': email, 'password': bcrypt.generate_password_hash(password), 'authentication_type': 'password'})
         user_id = users.find_one({'email': email})['_id']
         accounts.insert_one({'user_id': ObjectId(user_id), 'balance': 200000, 'created_at': datetime.datetime.now(), 'updated_at': datetime.datetime.now()})
@@ -97,7 +110,7 @@ def buy_stock():
         account = accounts.find_one({'user_id': ObjectId(user_id)})
         available_balance = account['balance']
         if shares <= 0:
-            return make_response(jsonify({'message': 'Shares bought must be greater than 0.'})), 400
+            return make_response(jsonify({'message': 'Shares must greater than 0'})), 400
         if available_balance < total_price:
             return make_response(jsonify({'message': 'Insufficient balance to complete the transaction'})), 400
         accounts.update_one({'_id': account['_id']}, {'$set':{'balance': (available_balance - total_price)}})
@@ -129,7 +142,7 @@ def sell_stock():
         account = accounts.find_one({'user_id': ObjectId(user_id)})
         available_balance = account['balance']
         if shares <= 0:
-            return make_response(jsonify({'message': 'Shares sold must be greater than 0.'})), 400
+            return make_response(jsonify({'message': 'Shares must greater than 0'})), 400
         if portfolio is None:
             return make_response(jsonify({'message': 'Not currently holding any shares of the stock.'})), 400
         if portfolio['shares'] < shares:
@@ -140,7 +153,6 @@ def sell_stock():
         if updated_shares == 0:
             portfolios.delete_one({'_id': portfolio['_id']})
             return make_response(jsonify({'message': 'All shares sold successfully.'})), 200
-        existing_shares = portfolio['shares']
         updated_average_cost = (portfolio['average_cost'] * portfolio['shares'] - shares * latest_stock_price) / (portfolio['shares'] - shares)
         updated_total_cost = portfolio['total_cost'] - total_price
         portfolios.update_one({'_id': portfolio['_id']}, {'$set': {'shares': updated_shares, 'average_cost': updated_average_cost, 'total_cost': updated_total_cost}})
@@ -165,21 +177,22 @@ def portfolio():
         return make_response(jsonify({'message': 'An error occurred while fetching the portfolio data.'})), 500
 
 
-@app.route('/api/transactions', methods=['GET'])
+@app.route('/api/stock-transactions', methods=['GET'])
 @jwt_required()
-def transactions():
+def stock_transactions():
     try:
         user_id = get_jwt_identity()
         user_transactions = list(transactions.find({'user_id': ObjectId(user_id)}, {'user_id': 0, '_id': 0}))
+        for transaction in user_transactions:
+            transaction['time'] = transaction['time'].strftime('%Y-%m-%d %H:%M:%S')
         return jsonify({'transactions': user_transactions}), 200
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while fetching the transactions.'})), 500
 
-@app.route('/api/stock-positions', methods=['GET'])
+@app.route('/api/stock-position/<symbol>', methods=['GET'])
 @jwt_required()
-def stock_positions():
+def stock_position(symbol):
     try:
-        symbol = request.args.get('symbol')
         if not symbol:
             return make_response(jsonify({'message': 'Stock symbol is required.'})), 400
         symbol = symbol.upper()
@@ -215,18 +228,17 @@ def leaderboard():
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while fetching the leaderboard.'})), 500
 
-@app.route('/api/search-stock')
+@app.route('/api/search-stock/<query>', methods=['GET'])
 @jwt_required()
-def search_stock():
+def search_stock(query):
     try:
-        query = request.args.get('query')
         query = str(query)
         stock_list = list(stocks.find({'$or':[{'Symbol' : {"$regex" : query, "$options": "i"}}, {'Name' : {"$regex" : query, "$options": "i"}}]}, {'Symbol': 1, 'Name': 1, '_id': 0}).limit(10))
         return jsonify({'stock_list': stock_list}), 200
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while searching for stocks.'}), 500)
 
-@app.route('/api/account-balance')
+@app.route('/api/account-balance', methods=['GET'])
 @jwt_required()
 def get_account_balance():
     try:
@@ -236,42 +248,47 @@ def get_account_balance():
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while fetching the account balance.'}), 500)
 
-@app.route('/api/update-password', methods=['POST'])
+@app.route('/api/update-password', methods=['PUT'])
 @jwt_required()
 def update_password():
     try:
         user_id = get_jwt_identity()
-        hashed_new_password = request.json['password']
-        users.update_one({'_id': ObjectId(user_id)},{'$set': {'password' : bcrypt.generate_password_hash(hashed_new_password)}})
+        password = request.json.get('password')
+        if not password:
+            return make_response(jsonify({'message': 'Password cannot be blank'}), 400)
+        if len(password) < 8:
+            return make_response(jsonify({'message': 'Password cannot be blank'}), 400)
+        users.update_one({'_id': ObjectId(user_id)},{'$set': {'password' : bcrypt.generate_password_hash(password)}})
         return make_response(jsonify({'message': 'Password updated successfully'}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while updating the password.'}), 500)
 
-@app.route('/api/update-username', methods=['POST'])
+@app.route('/api/update-username', methods=['PUT'])
 @jwt_required()
 def update_username():
     try:
         user_id = get_jwt_identity()
-        username = request.json['username']
+        username = request.json.get('username')
+        if not username:
+            return make_response(jsonify({'message': 'Username cannot be blank'}), 400)
+        if users.find_one({'username': username, '_id': {'$ne': ObjectId(user_id)}}):
+            return make_response(jsonify({'message': 'Username is already taken'}), 409)
         users.update_one({'_id': ObjectId(user_id)}, {'$set': {'username': username}})
         return make_response(jsonify({'message': 'Username updated successfully'}), 200)
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while updating the username.'}), 500)
 
-@app.route('/api/stock_price_data', methods=['GET'])
-def stock_price_data():
+@app.route('/api/stock_price_data/<symbol>/<period>', methods=['GET'])
+def stock_price_data(symbol, period):
     try:
-        symbol = request.args.get('symbol')
-        period = request.args.get('period')
         yfinance.Ticker(symbol).info['currentPrice']
         return jsonify({'stock_price_data': get_stock_price_data(symbol=symbol, period=period)}), 200
-    except:
-        return make_response(jsonify({'message': 'Requested stock not found'}), 404)
+    except Exception as e:
+        return make_response(jsonify({'message': 'An error occurred while fetching stock price data'}), 404)
 
-@app.route('/api/stock_info_data')
-def stock_info_data():
+@app.route('/api/stock_info_data/<symbol>', methods=['GET'])
+def stock_info_data(symbol):
     try:
-        symbol=request.args.get('symbol')
         stock_info = yfinance.Ticker(symbol).info
         filtered_stock_info = {
             'totalRevenue': stock_info.get('totalRevenue', 'N/A'),
@@ -289,11 +306,10 @@ def stock_info_data():
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while fetching stock information.'}), 500)
 
-@app.route('/api/latest-stock-price')
+@app.route('/api/latest-stock-price/<symbol>', methods=['GET'])
 @jwt_required()
-def latest_stock_price():
+def latest_stock_price(symbol):
     try:
-        symbol = request.args.get('symbol')
         return jsonify({'latest_stock_price': get_latest_stock_price(symbol)}), 200
     except Exception as e:
         return make_response(jsonify({'message': 'An error occurred while fetching the latest stock price.'}), 500)
@@ -312,7 +328,7 @@ def get_stock_price_data(symbol, period):
     if period == '1d' or period == '5d':
         stock_price_data = yfinance.download(symbol, interval='1m', period=period)
         stock_price_data.reset_index(inplace=True)     
-        stock_price_data['Time'] = stock_price_data['Datetime'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+        stock_price_data['Time'] = stock_price_data['Datetime'].dt.strftime('%Y-%m-%d %H:%M:%S')
         stock_price_data.drop(columns=['Datetime'], inplace=True)
         return list(stock_price_data.to_dict(orient='records'))
     stock_price_data.reset_index(inplace=True)
@@ -320,14 +336,7 @@ def get_stock_price_data(symbol, period):
     stock_price_data.drop(columns=['Date'], inplace=True)
     return list(stock_price_data.to_dict(orient='records'))
 
-db = client.stock_trading_simulator_database
-stocks = db.stocks
-user_stock_portfolios = db.user_stock_portfolios
-users = db.users
-transactions = db.transactions
-portfolios = db.portfolios
-accounts = db.accounts
-stocks = db.stocks
+# To load stock info data from csv to mongodb database, uncomment the code underneath and replace with the absolute filepath to nasdaq_stock_info.csv
 
 if __name__ == '__main__':
     app.run(debug=True)
